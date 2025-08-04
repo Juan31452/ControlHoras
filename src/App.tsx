@@ -1,33 +1,38 @@
 import { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import type { Registro } from "./ModeloDatos/RegistroInterface";
+import type { Registro, JefeLimpieza } from "./ModeloDatos/RegistroInterface";
 import FechaPersonalizada from "./Componentes/FechaPersonalizada";
 import NumeroInput from "./Componentes/NumeroInput";
 import TextoInput from "./Componentes/TextoInput";
 import BotonPersonalizado from "./Componentes/BotonPersonalizado";
 import TablaRegistros from "./Componentes/TableRegistros";
 
+// Definición del jefe fijo
+const nuevoJefe: JefeLimpieza = {
+  nombre: "Monica",
+  valorHora: 8,
+};
 
 export default function App() {
-  const [limpiador, setLimpiador] = useState<string>("");
   const [fecha, setFecha] = useState<string>("");
   const [nombrePiso, setNombrePiso] = useState<string>("");
   const [horas, setHoras] = useState<number>(0);
   const [minutos, setMinutos] = useState<number>(0);
-  const [valorHora, setValorHora] = useState<number>(0);
   const [registros, setRegistros] = useState<Registro[]>([]);
 
   const agregarRegistro = () => {
     const totalHoras = horas + minutos / 60;
-    const total = totalHoras * valorHora;
+    const total = parseFloat((totalHoras * nuevoJefe.valorHora).toFixed(2));
+
     const nuevoRegistro: Registro = {
       fecha,
       nombrePiso,
+      jefe: nuevoJefe, // Usamos el objeto completo del jefe
       horas,
       minutos,
-      valorHora,
       total,
     };
+
     setRegistros([...registros, nuevoRegistro]);
 
     // Limpiar campos después de agregar
@@ -35,7 +40,6 @@ export default function App() {
     setNombrePiso("");
     setHoras(0);
     setMinutos(0);
-    setValorHora(0);
   };
 
   return (
@@ -44,12 +48,23 @@ export default function App() {
         <h2 className="text-center mb-4">Registro de horas</h2>
 
         <form className="bg-secondary p-4 rounded mb-4">
-         <TextoInput label="🧹 Limpiador" value={limpiador} onChange={setLimpiador} placeholder="Nombre del limpiador" />
+          <TextoInput
+            label="🧹 Limpiador"
+            value={nuevoJefe.nombre}
+            onChange={() => {}}
+            placeholder="Nombre del limpiador"
+            
+          />
 
-         <hr className="text-white" />
+          <hr className="text-white" />
 
-         <FechaPersonalizada value={fecha} onChange={setFecha} />
-         <TextoInput label="🏢 Nombre del piso" value={nombrePiso} onChange={setNombrePiso} placeholder="Ej: Piso 1" />
+          <FechaPersonalizada value={fecha} onChange={setFecha} />
+          <TextoInput
+            label="🏢 Nombre del piso"
+            value={nombrePiso}
+            onChange={setNombrePiso}
+            placeholder="Ej: Piso 1"
+          />
 
           <div className="mb-3 row">
             <div className="col">
@@ -60,15 +75,20 @@ export default function App() {
             </div>
           </div>
 
-          <NumeroInput label="💰 Valor por hora" value={valorHora} onChange={setValorHora} min={0} />
-         
+          <NumeroInput
+            label="💰 Valor por hora"
+            value={nuevoJefe.valorHora}
+            onChange={() => {}}
+            min={0}
+            
+          />
+
           <div className="text-center">
             <BotonPersonalizado texto="Agregar registro" onClick={agregarRegistro} />
           </div>
-          
         </form>
 
-        <TablaRegistros registros={registros} limpiador={limpiador} />
+        <TablaRegistros registros={registros} limpiador={nuevoJefe.nombre} />
       </div>
     </div>
   );
