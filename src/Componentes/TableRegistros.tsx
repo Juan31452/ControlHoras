@@ -34,7 +34,7 @@ export default function TablaRegistros({ registros, limpiador }: Props) {
               <td>{r.nombrePiso}</td>
               <td>{r.horas}</td>
               <td>{r.minutos}</td>
-              <td>${r.valorHora}</td>
+              <td>${r.jefe.valorHora.toFixed(2)}</td>
               <td>${r.total.toFixed(2)}</td>
             </tr>
           ))}
